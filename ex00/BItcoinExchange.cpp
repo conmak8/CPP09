@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 18:49:19 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/09 01:03:10 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/05/09 20:42:48 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,49 @@ bool BitcoinExchange::loadDatabase(const std::string &filename) {
 	
 	file.close(); 													// ? do i close it or not?
 	return true;
+}
+
+void BitcoinExchange::processInput(const std::string &filename) {
+	std::ifstream file(filename);
+	if (!file.is_open()) {
+		std::cerr << "❌ Error: exchange rated could not be opened." << std::endl;
+		return ;
+	}
+
+	std::string line;
+	std::getline(file, line);
+
+	while (std::getline(file, line)) {
+		if (line.empty())
+			continue;
+
+		size_t separator = line.find('|');
+		if (separator == std::string::npos) {
+			std::cerr << "❌ Error: Invalid input" << line << std::endl;
+			continue;
+		}
+
+		std:: string date = line.substr(0, separator);
+		std::string valueStr = line.substr(separator + 1);
+
+		std::string whitespaces (" \t\f\v\n\r");
+		
+		std::size_t found = date.find_first_not_of(whitespaces);
+		// Trim leading  & trailing whitespace from date
+		date.erase(0, date.find_first_not_of(whitespaces));
+		date.erase(date.find_last_not_of(whitespaces) + 1);
+		// Trim leading & trailing whitespace from valueStr
+		valueStr.erase(0, valueStr.find_first_not_of(whitespaces));
+		valueStr.erase(valueStr.find_last_not_of(whitespaces) + 1);
+		
+		if (date.empty()) {	
+			std::cerr << "❌ Error: Date format in missing." << std::endl;
+			date.clear();
+		}
+		if (valueStr.empty()) {
+			std::cerr << "❌ Error: Value format in missing." << std::endl;
+			valueStr.clear();
+		}
+	
+
 }
