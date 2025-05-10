@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 18:49:19 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/09 21:25:37 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:00:04 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,104 @@
 
 
 //---------------OCF------------------//
-BitcoinExchange::BitcoinExchange() {
-	// Default constructor
+BitcoinExchange::BitcoinExchange() {											// Default constructor
 }
-BitcoinExchange::BitcoinExchange(const BitcoinExchange &src) {
-	// Copy constructor
+BitcoinExchange::BitcoinExchange(const BitcoinExchange &src) {					// Copy constructor
 	*this = src;
 }
-BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &rhs) {
-	// Copy assignment operator
+BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &rhs) {		// Copy assignment operator
 	if (this != &rhs) {
 		this->_dataBase = rhs._dataBase;
 	}
 	return *this;
 }
-BitcoinExchange::~BitcoinExchange() {
-	// Destructor
+BitcoinExchange::~BitcoinExchange() {											// Destructor
 }
+
+// v2.approach
+/* BitcoinExchange::BitcoinExchange() = default;
+BitcoinExchange::BitcoinExchange(const BitcoinExchange &other) = default;
+BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &other) = default;
+BitcoinExchange::~BitcoinExchange() = default; */
 //---------------Methods------------------//
 
-
-
+namespace { 
+	bool isValidDate(const std::string &date) {
+		if (date.length() != 10 || date[4] != '-' || date[7] != '-') {
+			return false;
+		}
+		
+		int year = std::stoi(date.substr(0, 4));
+		int month = std::stoi(date.substr(5, 2));
+		int day = std::stoi(date.substr(8, 2));
+	
+		if (month < 1 || month > 12 || day < 1 || day > 31) {
+			return false;
+		}
+		if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+			return false;
+		}
+		if (month == 2) {
+			bool isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+			if ((isLeapYear && day > 29) || (!isLeapYear && day > 28)) {
+				return false;
+			}
+		}
+		return true;
+	
+		// v2: approach
+	/* 	int y, m, d;
+		char dash1, dash2;
+		std::istringstream iss(date);
+		if (!(iss >> y >> dash1 >> m >> dash2 >> d) || dash1 != '-' || dash2 != '-') {
+			return false;
+		}
+		if (m < 1 || m > 12 || d < 1 || d > 31) {
+			return false;
+		}
+		return true; */
+	}
+	
+	bool isValidValue(const std::string &valueStr, double &value) {
+		// Check if the value is a valid number and within the range
+		// v1: approach
+	/* 	if (valueStr.empty()) {
+			return false;
+		}
+		
+		for (char c : valueStr) {
+			if (!std::isdigit(c) && c != '.' && c != '-') {
+				return false;
+			}
+		} */
+		// v2: approach Catch any exception with that
+		if (valueStr.empty()) {
+			return false;
+		}
+		try {
+			value = std::stod(valueStr);
+			if (value < 0) {
+				std::cerr << "❌ Error: Value not a positive number." << std::endl;
+				return false;
+			} else if (value > 1000) {
+				std::cerr << "❌ Error: Value is too high." << std::endl;
+				return false;
+			}
+		} catch (const std::invalid_argument&) {
+			std::cerr << "❌ Error: Invalid value." << std::endl;
+			return false;
+		} catch (const std::out_of_range&) {
+			std::cerr << "❌ Error: Value out of range." << std::endl;
+			return false;
+		} catch (...) {
+			std::cerr << "❌ Error: Unknown error." << std::endl;
+			return false;
+		}
+		return true;
+	}
+}
 
 bool BitcoinExchange::loadDatabase(const std::string &filename) {
-	
 	std::ifstream file(filename);
 	if (!file.is_open()) {
 		std::cerr << "❌ Error: exchange rated could not be opened." << std::endl;
@@ -93,7 +167,6 @@ bool BitcoinExchange::loadDatabase(const std::string &filename) {
 			}	
 		}
 	} */
-	
 	file.close(); 													// ? do i close it or not?
 	return true;
 }
@@ -123,7 +196,7 @@ void BitcoinExchange::processInput(const std::string &filename) {
 
 		std::string whitespaces (" \t\f\v\n\r");
 		
-		std::size_t found = date.find_first_not_of(whitespaces);
+		// std::size_t found = date.find_first_not_of(whitespaces);
 		// Trim leading  & trailing whitespace from date
 		date.erase(0, date.find_first_not_of(whitespaces));
 		date.erase(date.find_last_not_of(whitespaces) + 1);
@@ -147,80 +220,16 @@ void BitcoinExchange::processInput(const std::string &filename) {
 			std::cerr << "❌ Error: Invalid value format => " << valueStr << std::endl;
 		} else {
 			std::string closestDate = findClosestDate(date);
-				}
-			}
-}
-		
-bool isValidDate(const std::string &date) {
-	if (date.length() != 10 || date[4] != '-' || date[7] != '-') {
-		return false;
-	}
-	
-	int year = std::stoi(date.substr(0, 4));
-	int month = std::stoi(date.substr(5, 2));
-	int day = std::stoi(date.substr(8, 2));
-
-	if (month < 1 || month > 12 || day < 1 || day > 31) {
-		return false;
-	}
-	if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
-		return false;
-	}
-	if (month == 2) {
-		bool isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-		if ((isLeapYear && day > 29) || (!isLeapYear && day > 28)) {
-			return false;
+			double rate = _dataBase[closestDate];
+			std::cout << date << " => " << valueStr << " = " << rate * value << std::endl;
 		}
 	}
-	return true;
-
-	// v2: approach
-/* 	int y, m, d;
-	char dash1, dash2;
-	std::istringstream iss(date);
-	if (!(iss >> y >> dash1 >> m >> dash2 >> d) || dash1 != '-' || dash2 != '-') {
-		return false;
-	}
-	if (m < 1 || m > 12 || d < 1 || d > 31) {
-		return false;
-	}
-	return true; */
 }
 
-bool isValidValue(const std::string &valueStr, double &value) {
-	// Check if the value is a valid number and within the range
-	// v1: approach
-/* 	if (valueStr.empty()) {
-		return false;
+std::string BitcoinExchange::findClosestDate(const std::string &date) const {
+	std::map<std::string, double>::const_iterator it = _dataBase.upper_bound(date); 		// ? check if upper_bound is correct
+	if (it == _dataBase.end()) {
+		--it;
 	}
-	
-	for (char c : valueStr) {
-		if (!std::isdigit(c) && c != '.' && c != '-') {
-			return false;
-		}
-	} */
-	// v2: approach Catch any exception with that
-	if (valueStr.empty()) {
-		return false;
-	}
-	try {
-		value = std::stod(valueStr);
-		if (value < 0) {
-			std::cerr << "❌ Error: Value not a positive number." << std::endl;
-			return false;
-		} else if (value > 5000) {
-			std::cerr << "❌ Error: Value is too high." << std::endl;
-			return false;
-		}
-	} catch (const std::invalid_argument&) {
-		std::cerr << "❌ Error: Invalid value." << std::endl;
-		return false;
-	} catch (const std::out_of_range&) {
-		std::cerr << "❌ Error: Value out of range." << std::endl;
-		return false;
-	} catch (...) {
-		std::cerr << "❌ Error: Unknown error." << std::endl;
-		return false;
-	}
-	return true;
+	return it->first;
 }
