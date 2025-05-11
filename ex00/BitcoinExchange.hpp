@@ -6,15 +6,15 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 18:31:41 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/10 12:50:08 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/05/10 15:51:41 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BITCOINEXCHANGE_HPP
 # define BITCOINEXCHANGE_HPP
 
-#include <iostream>
-#include <map>
+# include <map> // std::map
+# include <string> // std::string
 
 
 class BitcoinExchange {
