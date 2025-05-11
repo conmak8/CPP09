@@ -6,13 +6,15 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 18:49:19 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/10 13:00:04 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/05/11 15:11:36 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
-#include <fstream>
-#include <sstream>
+#include <iostream> // std::cerr, std::cout
+#include <fstream> // std::ifstream
+#include <sstream> // std::istringstream, std::ostringstream
+#include <ctime> // std::time, std::localtime
 
 
 //---------------OCF------------------//
@@ -37,43 +39,50 @@ BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &other) = defa
 BitcoinExchange::~BitcoinExchange() = default; */
 //---------------Methods------------------//
 
-namespace { 
+namespace {
 	bool isValidDate(const std::string &date) {
 		if (date.length() != 10 || date[4] != '-' || date[7] != '-') {
 			return false;
 		}
-		
-		int year = std::stoi(date.substr(0, 4));
-		int month = std::stoi(date.substr(5, 2));
-		int day = std::stoi(date.substr(8, 2));
-	
-		if (month < 1 || month > 12 || day < 1 || day > 31) {
-			return false;
-		}
-		if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
-			return false;
-		}
-		if (month == 2) {
-			bool isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-			if ((isLeapYear && day > 29) || (!isLeapYear && day > 28)) {
-				return false;
-			}
-		}
-		return true;
-	
 		// v2: approach
-	/* 	int y, m, d;
+		int y, m, d;
 		char dash1, dash2;
 		std::istringstream iss(date);
-		if (!(iss >> y >> dash1 >> m >> dash2 >> d) || dash1 != '-' || dash2 != '-') {
+		if (!(iss >> y >> dash1 >> m >> dash2 >> d) || dash1 != '-' || dash2 != '-' || !iss.eof()) {
 			return false;
 		}
 		if (m < 1 || m > 12 || d < 1 || d > 31) {
 			return false;
 		}
-		return true; */
+		if ((m == 4 || m == 6 || m == 9 || m == 11) && d > 30) {
+			return false;
+		}
+		if (m == 2) {
+			bool isLeapyear = (y % 4 == 0 && y % 100 != 0) || (y % 400 == 0);
+			if ((isLeapyear && d > 29) || (!isLeapyear && d > 28)) {
+				return false;
+			}
+		}
+		// check if the date is before 2009-01-02
+		if (y < 2009 || (y == 2009 && m == 1 && d < 2)) {
+			std::cerr << "❌ Error: Date => " << date << " is before 2009-01-02! There was NO bitcoin dumpy!" << std::endl;
+			return false;
+		}
+		// check if the date is in the future
+		std::time_t t = std::time(nullptr);
+		std::tm *now = std::localtime(&t);
+		int currY = now->tm_year + 1900;
+		int currM = now->tm_mon + 1;
+		int currD = now->tm_mday;
+
+		if (y > currY || (y == currY && m > currM) || (y == currY && m == currM && d > currD)) {
+			std::cerr << "❌ Error: Date is in the future => " << date  << " Are you wizard🧙 or what ?" << std::endl;
+			return false;
+		}
+		
+		return true;
 	}
-	
+
 	bool isValidValue(const std::string &valueStr, double &value) {
 		// Check if the value is a valid number and within the range
 		// v1: approach
@@ -91,7 +100,12 @@ namespace {
 			return false;
 		}
 		try {
-			value = std::stod(valueStr);
+			size_t pos;
+			value = std::stod(valueStr, &pos);
+			if (pos != valueStr.length()) {
+				std::cerr << "❌ Error: Invalid character in value. => " << valueStr.substr(pos) << std::endl;
+				return false;
+			}
 			if (value < 0) {
 				std::cerr << "❌ Error: Value not a positive number." << std::endl;
 				return false;
@@ -121,40 +135,21 @@ bool BitcoinExchange::loadDatabase(const std::string &filename) {
 	}
 
 	std::string line;
-	std::getline(file, line);							// ? could or should i skip the header? how?
-	if (line != "date,exchange_rate") {					// i check if the header is correct at first ?need it?
+	std::getline(file, line);
+	if (line != "date,exchange_rate") {
 		std::cerr << "❌ Error: Invalid header format in database." << std::endl;
 		return false;
 	}
 	
-	// v1:	approach
-	while (std::getline(file, line)) {
-		std::istringstream iss(line);
-		std::string date, valueStr;
-		
-		if (line.empty()) {
-			std::cerr << "❌ Error: Empty line found in database." << std::endl;
-			return false;
-		}
-		if (!(iss >> date >> valueStr)) {												// ? will understand the comma?
-			std::cerr << "❌ Error: Invalid data format in database." << std::endl;
-			return false;
-		}
-		double rate = std::stod(valueStr);
-		if (rate < 0) {
-			std::cerr << "❌ Error: Negative exchange rate found." << std::endl;
-			return false;
-		}
-		_dataBase[date] = rate;
-	}
 
 	// v2:	approach
-/* 	while (std::getline(file, line)) {
+	while (std::getline(file, line)) {
 		std::istringstream iss(line);
 		std::string date, valueStr;
 		
 		if (std::getline(iss, date, ',') && std::getline(iss, valueStr)) {
 			try {
+				// std::cout << date << " => " << valueStr << std::endl;
 				double rate = std::stod(valueStr);
 				if (rate < 0) {
 					std::cerr << "❌ Error: Negative exchange rate found." << std::endl;
@@ -164,10 +159,11 @@ bool BitcoinExchange::loadDatabase(const std::string &filename) {
 			} catch (...) {
 				std::cerr << "❌ Error: Invalid data format in database." << std::endl;
 				return false;
-			}	
+			}
 		}
-	} */
-	file.close(); 													// ? do i close it or not?
+	}
+	file.close(); 													// ? do i close it or not? ??
+								// ! When it goes out of scope, the destructor is automatically called: ~ifstream() { close(); }
 	return true;
 }
 
@@ -187,7 +183,7 @@ void BitcoinExchange::processInput(const std::string &filename) {
 
 		size_t separator = line.find('|');
 		if (separator == std::string::npos) {
-			std::cerr << "❌ Error: Invalid input" << line << std::endl;
+			std::cerr << "❌ Error: Invalid input => " << line << std::endl;
 			continue;
 		}
 
@@ -196,7 +192,6 @@ void BitcoinExchange::processInput(const std::string &filename) {
 
 		std::string whitespaces (" \t\f\v\n\r");
 		
-		// std::size_t found = date.find_first_not_of(whitespaces);
 		// Trim leading  & trailing whitespace from date
 		date.erase(0, date.find_first_not_of(whitespaces));
 		date.erase(date.find_last_not_of(whitespaces) + 1);
@@ -215,20 +210,21 @@ void BitcoinExchange::processInput(const std::string &filename) {
 		/* Validation of date and valueStr formats */
 		double value = 0;
 		if (!isValidDate(date)) {
-			std::cerr << "❌ Error: Invalid date format => " << date << std::endl;
+			// std::cerr << "❌ Error: Invalid date format => " << date << std::endl;
 		} else if (!isValidValue(valueStr, value)) {
-			std::cerr << "❌ Error: Invalid value format => " << valueStr << std::endl;
+			// std::cerr << "❌ Error: Invalid value format => " << valueStr << std::endl;
 		} else {
 			std::string closestDate = findClosestDate(date);
+			// std::cout << "Closest date: " << closestDate << " Data: " << _dataBase[closestDate] << std::endl;
 			double rate = _dataBase[closestDate];
-			std::cout << date << " => " << valueStr << " = " << rate * value << std::endl;
+			std::cout << "\033[32m" << date << " => " << valueStr << " = " << value << " * " << rate << " = " << "\033[1m" << rate * value << "\033[0m" << std::endl;
 		}
 	}
 }
 
 std::string BitcoinExchange::findClosestDate(const std::string &date) const {
-	std::map<std::string, double>::const_iterator it = _dataBase.upper_bound(date); 		// ? check if upper_bound is correct
-	if (it == _dataBase.end()) {
+	std::map<std::string, double>::const_iterator it = _dataBase.lower_bound(date);			// ? check if upper_bound is correct
+	if (it == _dataBase.end() || it->first != date) {
 		--it;
 	}
 	return it->first;
