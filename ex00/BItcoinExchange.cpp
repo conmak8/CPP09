@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 18:49:19 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/11 15:11:36 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/05/11 15:31:52 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,8 +141,6 @@ bool BitcoinExchange::loadDatabase(const std::string &filename) {
 		return false;
 	}
 	
-
-	// v2:	approach
 	while (std::getline(file, line)) {
 		std::istringstream iss(line);
 		std::string date, valueStr;
@@ -151,6 +149,7 @@ bool BitcoinExchange::loadDatabase(const std::string &filename) {
 			try {
 				// std::cout << date << " => " << valueStr << std::endl;
 				double rate = std::stod(valueStr);
+				// std::cout << date << " => " << valueStr << std::endl;q
 				if (rate < 0) {
 					std::cerr << "❌ Error: Negative exchange rate found." << std::endl;
 					return false;
@@ -217,9 +216,11 @@ void BitcoinExchange::processInput(const std::string &filename) {
 			std::string closestDate = findClosestDate(date);
 			// std::cout << "Closest date: " << closestDate << " Data: " << _dataBase[closestDate] << std::endl;
 			double rate = _dataBase[closestDate];
-			std::cout << "\033[32m" << date << " => " << valueStr << " = " << value << " * " << rate << " = " << "\033[1m" << rate * value << "\033[0m" << std::endl;
+			std::cout << "\033[32m" << date << " => " << valueStr << " = " << value << " * " 
+			<< rate << " = " << "\033[1m" << rate * value << "\033[0m" << std::endl;
 		}
 	}
+	 file.close();
 }
 
 std::string BitcoinExchange::findClosestDate(const std::string &date) const {
