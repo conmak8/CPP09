@@ -1,9 +1,9 @@
-NAME		=	bitcoin
+NAME		=	btc
 CXX			=	c++
 FLAGS		=	-Wall -Wextra -Werror
 STANDARD	=	--std=c++17
-SRCS		=	
-HEADERS		=	
+SRCS		=	main.cpp BitcoinExchange.cpp
+HEADERS		=	BitcoinExchange.hpp
 OBJS		=	$(SRCS:.cpp=.o)
 
 %.o:%.cpp $(HEADERS)
