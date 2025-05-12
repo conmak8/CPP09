@@ -1,25 +1,31 @@
- NAME			=	RPN
- CXX			=	c++
- FLAGS			=	-Wall -Wextra -Werror
- STANDARD		=	--std=c++17
- SRCS			=	
- HEADERS		=
- OBJS			=	$(SRCS:.cpp=.o)
+NAME			=	RPN
+CXX				=	c++
+FLAGS			=	-Wall -Wextra -Werror
+STANDARD		=	--std=c++17
+SRCS			=	main.cpp RPN.cpp
+HEADERS			=	RPN.hpp
+OBJS			=	$(SRCS:.cpp=.o)
 
-%.o:%.cpp $(HEADERS)
-	$(CXX) $(FLAGS) $(STANDARD) -o $@ -c $<
+# Rule to create object files
+%.o: %.cpp $(HEADERS)
+	$(CXX) $(FLAGS) $(STANDARD) -c $< -o $@
 
-$(NAME):$(OBJS)
-	$(CXX) $(OBJS) -o $(NAME)
+# Linking the object files into the final executable
+$(NAME): $(OBJS)
+	$(CXX) $(OBJS) $(FLAGS) $(STANDARD) -o $(NAME)
 
-all:$(NAME)
+# Default target
+all: $(NAME)
 
+# Clean object files
 clean:
 	rm -rf $(OBJS)
 
-fclean:clean
-	rm -rf $(OBJS)
+# Clean object files and executable
+fclean: clean
+	rm -rf $(NAME)
 
-re:fclean all
+# Rebuild everything
+re: fclean all
 
-.PHONY:	all clean fclean re
+.PHONY: all clean fclean re
