@@ -6,13 +6,18 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 20:19:32 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/12 13:10:14 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/05/12 13:27:58 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RPN.hpp"
-#include <sstream>
+#include <sstream> // for std::istringstream
+#include <stdexcept> // for std::invalid_argument and std::runtime_error
 
+
+bool RPN::isOperator(char c) const {
+	return c == '+' || c == '-' || c == '*' || c == '/';
+}
 
 // v.1
 int RPN::evaluate(const std::string &input) {
