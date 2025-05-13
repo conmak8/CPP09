@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 20:19:32 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/13 10:43:14 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/05/13 11:41:14 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,24 @@
 // #include <iostream> // for debugging
 
 
+//-------------------OCF-----------------//
+#include "RPN.hpp"
+
+RPN::RPN() {}								// Default constructor
+
+RPN::RPN(const RPN& other) {				// Copy constructor
+	*this = other;
+}
+
+RPN &RPN::operator=(const RPN& other) {		// Copy assignment operator
+	(void)other;
+	return *this;
+}
+
+RPN::~RPN() {}								// Destructor
+
+
+//-----------------Member functions-------//
 bool RPN::isOperator(char c) const {
 	return c == '+' || c == '-' || c == '*' || c == '/';
 }
