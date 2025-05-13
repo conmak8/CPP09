@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/11 20:19:32 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/13 11:41:14 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/05/13 12:06:35 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,24 @@
 #include <sstream> // for std::istringstream
 #include <stdexcept> // for std::invalid_argument and std::runtime_error
 #include <cctype> // for std::isdigit
-// #include <iostream> // for debugging
+#include <iostream> // for debugging
 
 
 //-------------------OCF-----------------//
 #include "RPN.hpp"
 
-RPN::RPN() {}								// Default constructor
+// RPN::RPN() {}								// Default constructor
+
+RPN::RPN(bool debug) : _debug(debug) {}		// Custom Constructor with debug flag
 
 RPN::RPN(const RPN& other) {				// Copy constructor
 	*this = other;
 }
 
-RPN &RPN::operator=(const RPN& other) {		// Copy assignment operator
-	(void)other;
+RPN& RPN::operator=(const RPN& other) {		// Copy assignment operator
+	if (this != &other) {
+		this->_debug = other._debug;
+	}
 	return *this;
 }
 
@@ -53,24 +57,29 @@ void RPN::applyOperator(char op, std::stack<int> &stack) {
 	switch (op) {
 		case '+':
 			result = left + right;
+			if (_debug) std::cout << "🧪 Adding: " << left << " + " << right << " = " << result << std::endl;
 			break;
 		case '-':
 			result = left - right;
+			if (_debug) std::cout << "🧪 Subtracting: " << left << " - " << right << " = " << result << std::endl;
 			break;
 		case '*':
 			result = left * right;
+			if (_debug) std::cout << "🧪 Multiplying: " << left << " * " << right << " = " << result << std::endl;
 			break;
 		case '/':
 			if (right == 0) {
 				throw std::runtime_error("❌ Error: Division by zero.");
 			}
 			result = left / right;
+			if (_debug) std::cout << "🧪 Dividing: " << left << " / " << right << " = " << result << std::endl;
 			break;
 		default:
 			throw std::invalid_argument("❌ Error: Unknown operator");
 		}
 		
 	stack.push(result);
+	if (_debug) std::cout << "🧪 Result pushed: " << result << std::endl;
 }
 
 
@@ -132,6 +141,9 @@ int RPN::evaluate(const std::string &input) {
 		if (token.length() == 1 && std::isdigit(token[0])) {
 			int num = token[0] - '0';
 			stack.push(num);
+			if (_debug) {
+				std::cout << "🧪 Stack top: " << stack.top() << std::endl;
+			}
 		} else if (token.length() == 1 && isOperator(token[0])) {
 				applyOperator(token[0], stack);
 		} else if (std::isdigit(token[0]) && token.length() > 1) {
