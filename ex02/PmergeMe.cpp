@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   PMergeMe.cpp                                       :+:      :+:    :+:   */
+/*   PmergeMe.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 01:35:51 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/01 13:51:39 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "PMergeMe.hpp"
+#include "PmergeMe.hpp"
 
 // =================OCF================== //
 PmergeMe::PmergeMe() : _debugMode(false) {}
@@ -55,3 +55,33 @@ std::vector<int> PmergeMe::generateJacobsthalSequence(int size) {
 	return sequence;
 }
 
+// ===================Parse command argumentss==================== //
+void PmergeMe::parseInput(int argc, char** argv) {
+	if (argc < 2) {
+		throw std::invalid_argument("Usage: ./PmergeMe [numbers...] [--debug]");
+	}
+
+	for (int i = 1; i < argc; ++i) {
+		std::string arg(argv[i]);
+
+		if (arg == "--debug") {
+			setDebugMode(true);
+			continue;
+		}
+
+		validateInput(arg);
+		int num = std::stoi(arg);
+
+		_vectorData.push_back(num);
+		_dequeData.push_back(num);
+	}
+
+	if (_vectorData.empty()) {
+		throw std::invalid_argument("No valid numbers provided");
+	}
+
+	printDebug("✅ Input parsed successfully!");
+	printContainer("Original Vector", _vectorData);
+	printContainer("Original Deque", _dequeData);
+}
+`
