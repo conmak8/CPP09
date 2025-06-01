@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 20:30:42 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/01 21:36:34 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,10 @@ void PmergeMe::parseInput(int argc, char** argv) {
 
 // ===================Sort and Compare ==================== //
 void PmergeMe::sortAndCompare() {
+	// Initialize time variables
+	double vectorTime = 0.0;
+	double dequeTime  = 0.0;
+	
 	// DIsplay initial data
 	std::cout << "⏳ Initial Vector: ";
 	for (size_t i = 0; i < _vectorData.size() && i <= 20; ++i) {
@@ -129,9 +133,18 @@ void PmergeMe::sortAndCompare() {
 	}
 	std::cout << std::endl;
 	
-	// Measure time for sorting
+	// Time vector sorting
+	auto vecStart = std::chrono::high_resolution_clock::now();
 	sortVector();
+	auto vecEnd = std::chrono::high_resolution_clock::now();
+	vectorTime = std::chrono::duration<double, std::micro>(vecEnd - vecStart).count(); // microseconds
+	
+	// Time deque sorting
+	auto deqStart = std::chrono::high_resolution_clock::now();
 	sortDeque();
+	auto deqEnd = std::chrono::high_resolution_clock::now();
+	dequeTime = std::chrono::duration<double, std::micro>(deqEnd - deqStart).count(); // microseconds
+	
 	
 	// Display sorted sequence
 	std::cout << "✅ After: ";
@@ -145,11 +158,11 @@ void PmergeMe::sortAndCompare() {
 	
 	// Display time taken
 	
-	// std::cout << std::fixed << std::setprecision(6);
-	// std::cout << "Time to process a range of " << _vectorData.size() 
-	// 		<< " elements with std::vector : " <<  << " ms" << std::endl;
-    // std::cout << "Time to process a range of " << _dequeData.size() 
-    //           << " elements with std::deque : " <<  << " ms" << std::endl;
+	std::cout << std::fixed << std::setprecision(6);
+	std::cout << "Time to process a range of " << _vectorData.size() 
+			<< " elements with std::vector : " << vectorTime/1000 << " ms" << std::endl;
+    std::cout << "Time to process a range of " << _dequeData.size() 
+              << " elements with std::deque : " << dequeTime/1000 << " ms" << std::endl;
 }
 
 // ===================Sort Vector ==================== //
@@ -189,6 +202,7 @@ std::vector<int> PmergeMe::fordJohnsonVector(std::vector<int>& data) {
 
 	}
 
+
 	// Step 2: Extract winners and pendings and recursively sort them
 	std::vector<int> winners;
 	std::vector<int> pendings;
@@ -197,6 +211,23 @@ std::vector<int> PmergeMe::fordJohnsonVector(std::vector<int>& data) {
 		winners.push_back(pair.first);   // Winner (larger element)
 		pendings.push_back(pair.second); // Pending (smaller element)
 	}
+
+	// v.2 Step 1: Create pairs and sort them & Step 2: Extract winners and pendings and recursively sort them
+/* 	std::vector<int> winners, pendings;
+	bool hasOdd = (data.size() % 2 == 1);
+	int oddElement = hasOdd ? data.back() : -1;
+	// Create pairs from neighbor elements
+	for (size_t i = 0; i < data.size() - hasOdd; i += 2) {
+	int a = data[i], b = data[i+1];
+	// Sort the pair so larger element is first (winner)
+		if (a > b) {
+			winners.push_back(a);
+			pendings.push_back(b);
+		} else {
+			winners.push_back(b);
+			pendings.push_back(a);
+		}
+	} */
 
 	// Recursively sort winners
 	if (winners.size() > 1) {
@@ -221,18 +252,18 @@ std::vector<int> PmergeMe::fordJohnsonVector(std::vector<int>& data) {
 		std::vector<bool> inserted(pendings.size(), false);
 		inserted[0] = true; // First pending is already in main chain
 	
-	// Step 4:Insert pendings according to Jacobsthal order
-	for (int jacobIndex : jacobsthalSeq) {
-		if (jacobIndex < static_cast<int>(pendings.size()) && !inserted[jacobIndex]) {
-			int elementToInsert = pendings[jacobIndex];
-			
-			// Binary search for insertion position
-			auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), elementToInsert);
-			mainChain.insert(insertPos, elementToInsert);
-			inserted[jacobIndex] = true;
-			
+		// Step 4:Insert pendings according to Jacobsthal order
+		for (int jacobIndex : jacobsthalSeq) {
+			if (jacobIndex < static_cast<int>(pendings.size()) && !inserted[jacobIndex]) {
+				int elementToInsert = pendings[jacobIndex];
+				
+				// Binary search for insertion position
+				auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), elementToInsert);
+				mainChain.insert(insertPos, elementToInsert);
+				inserted[jacobIndex] = true;
+				
+			}
 		}
-	}
 		
 		// Insert any remaining pendings in order
 		for (size_t i = 1; i < pendings.size(); ++i) {
@@ -243,15 +274,13 @@ std::vector<int> PmergeMe::fordJohnsonVector(std::vector<int>& data) {
 			}
 		}
 	}
-	
+
 	// Step 5: Handle odd element if present
 	if (hasOdd) {
-		printDebug("🔄 Step 5: Inserting odd element: " + std::to_string(oddElement));
 		auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), oddElement);
 		mainChain.insert(insertPos, oddElement);
 	}
 	
-	// printContainer("Final sorted result", mainChain);
 	return mainChain;
 }
 
@@ -323,33 +352,33 @@ std::deque<int> PmergeMe::fordJohnsonDeque(std::deque<int>& data) {
 		std::vector<bool> inserted(pendings.size(), false);
 		inserted[0] = true; // First pending is already in main chain
 
-	// Insert pendings according to Jacobsthal order
-	 for (int jacobIndex : jacobsthalSeq) {
-		if (jacobIndex < static_cast<int>(pendings.size()) && !inserted[jacobIndex]) {
-			int elementToInsert = pendings[jacobIndex];
+		// Insert pendings according to Jacobsthal order
+		for (int jacobIndex : jacobsthalSeq) {
+			if (jacobIndex < static_cast<int>(pendings.size()) && !inserted[jacobIndex]) {
+				int elementToInsert = pendings[jacobIndex];
 			
-			// Binary search for insertion position in deque
-			auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), elementToInsert);
-			mainChain.insert(insertPos, elementToInsert);
-			inserted[jacobIndex] = true;
+				// Binary search for insertion position in deque
+				auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), elementToInsert);
+				mainChain.insert(insertPos, elementToInsert);
+				inserted[jacobIndex] = true;
+			}
 		}
-	}
 	
-	// Insert any remaining pendings in order
-	for (size_t i = 1; i < pendings.size(); ++i) {
-		if (!inserted[i]) {
-			int elementToInsert = pendings[i];
-			auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), elementToInsert);
-			mainChain.insert(insertPos, elementToInsert);
+		// Insert any remaining pendings in order
+		for (size_t i = 1; i < pendings.size(); ++i) {
+			if (!inserted[i]) {
+				int elementToInsert = pendings[i];
+				auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), elementToInsert);
+				mainChain.insert(insertPos, elementToInsert);
+			}
 		}
 	}
-}
 
-// Step 5: Handle odd element if present
-if (hasOdd) {
-	auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), oddElement);
-	mainChain.insert(insertPos, oddElement);
-}
+	// Step 5: Handle odd element if present
+	if (hasOdd) {
+		auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), oddElement);
+		mainChain.insert(insertPos, oddElement);
+	}
 
-return mainChain;
+	return mainChain;
 }
