@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:21:22 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 19:57:05 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:16:40 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,10 @@ public:
 	// Vector sorting functions (separate file)
 	void sortVector();
 	std::vector<int> fordJohnsonVector(std::vector<int>& data);
+
+	// Deque sorting functions (separate file)  
+	void sortDeque();
+	std::deque<int> fordJohnsonDeque(std::deque<int>& data);
 
 	// Utility functions
 	void validateInput(const std::string& str);

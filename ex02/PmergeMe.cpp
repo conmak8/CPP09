@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 20:07:55 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:30:42 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ void PmergeMe::sortAndCompare() {
 	
 	// Measure time for sorting
 	sortVector();
+	sortDeque();
 	
 	// Display sorted sequence
 	std::cout << "✅ After: ";
@@ -152,8 +153,6 @@ void PmergeMe::sortAndCompare() {
 }
 
 // ===================Sort Vector ==================== //
-
-
 void PmergeMe::sortVector() {
 	_vectorData = fordJohnsonVector(_vectorData);
 }
@@ -256,3 +255,101 @@ std::vector<int> PmergeMe::fordJohnsonVector(std::vector<int>& data) {
 	return mainChain;
 }
 
+// ===================Deque sort ==================== //
+void PmergeMe::sortDeque() {
+	_dequeData = fordJohnsonDeque(_dequeData);
+}
+
+std::deque<int> PmergeMe::fordJohnsonDeque(std::deque<int>& data) {
+	
+	// Base cases
+	if (data.size() <= 1) {
+		return data;
+	}
+	if (data.size() == 2) {
+		if (data[0] > data[1]) {
+			std::swap(data[0], data[1]);
+		}
+		return data;
+	}
+
+	// Step 1: Create pairs and sort them
+	std::vector<std::pair<int, int> > pairs;
+	bool hasOdd = (data.size() % 2 == 1);
+	int oddElement = hasOdd ? data.back() : -1;
+
+	// Create pairs from neighbohr elements
+	for (size_t i = 0; i < data.size() - (hasOdd ? 1 : 0); i += 2) {
+		int first = data[i];
+		int second = data[i + 1];
+
+		// Sort the pair so larger element is first (winner)
+		if (first < second) {
+			pairs.push_back(std::make_pair(second, first));
+		} else {
+			pairs.push_back(std::make_pair(first, second));
+		}
+	}
+
+	// Step 2: Extract winners and pendings and recursively sort them
+	std::deque<int> winners;
+	std::deque<int> pendings;
+
+	for (const auto& pair : pairs) {
+		winners.push_back(pair.first);   // Winner (larger element)
+		pendings.push_back(pair.second); // Pending (smaller element)
+	}
+
+	// Recursively sort winners
+	if (winners.size() > 1) {
+		winners = fordJohnsonDeque(winners);
+	}
+	
+	// Step 3: Create main chain from winners starting with the smallest pending
+	std::deque<int> mainChain;
+
+	if (!pendings.empty()) {
+		mainChain.push_back(pendings[0]); // First pending is always smallest
+	}
+
+	// Add all winners to main chain
+	for (int winner : winners) {
+		mainChain.push_back(winner);
+	}
+
+	// Step 4: Insert remaining pendings using Jacobsthal sequence
+	if (pendings.size() > 1) {
+		std::vector<int> jacobsthalSeq = generateJacobsthalSequence(pendings.size());
+		std::vector<bool> inserted(pendings.size(), false);
+		inserted[0] = true; // First pending is already in main chain
+
+	// Insert pendings according to Jacobsthal order
+	 for (int jacobIndex : jacobsthalSeq) {
+		if (jacobIndex < static_cast<int>(pendings.size()) && !inserted[jacobIndex]) {
+			int elementToInsert = pendings[jacobIndex];
+			
+			// Binary search for insertion position in deque
+			auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), elementToInsert);
+			mainChain.insert(insertPos, elementToInsert);
+			inserted[jacobIndex] = true;
+		}
+	}
+	
+	// Insert any remaining pendings in order
+	for (size_t i = 1; i < pendings.size(); ++i) {
+		if (!inserted[i]) {
+			int elementToInsert = pendings[i];
+			auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), elementToInsert);
+			mainChain.insert(insertPos, elementToInsert);
+		}
+	}
+}
+
+// Step 5: Handle odd element if present
+if (hasOdd) {
+	auto insertPos = std::lower_bound(mainChain.begin(), mainChain.end(), oddElement);
+	mainChain.insert(insertPos, oddElement);
+}
+
+return mainChain;
+}
