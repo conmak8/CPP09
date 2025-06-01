@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 13:51:39 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/01 14:15:45 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,26 @@ std::vector<int> PmergeMe::generateJacobsthalSequence(int size) {
 }
 
 // ===================Parse command argumentss==================== //
+void PmergeMe::validateInput(const std:: string& str) {
+	if (str.empty()) {
+		throw std::invalid_argument("Empty input");
+	}
+
+	// check if we have positive integers only
+	for (size_t i = 0; i < str.length(); ++i) {
+		if (!std::isdigit(str[i])) {
+			throw std::invalid_argument("Invalid character in number: " + str);
+		}
+	}
+
+	// Convert to long and check its rangee
+	long num = std::stol(str);
+	if (num < 0 || num > std::numeric_limits<int>::max()) {
+		throw std::invalid_argument("Number out of valid range: " + str);
+	}
+}
+
+
 void PmergeMe::parseInput(int argc, char** argv) {
 	if (argc < 2) {
 		throw std::invalid_argument("Usage: ./PmergeMe [numbers...] [--debug]");
@@ -84,4 +104,3 @@ void PmergeMe::parseInput(int argc, char** argv) {
 	printContainer("Original Vector", _vectorData);
 	printContainer("Original Deque", _dequeData);
 }
-`
