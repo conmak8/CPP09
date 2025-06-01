@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 14:21:21 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/01 15:12:08 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,4 +115,38 @@ void PmergeMe::parseInput(int argc, char** argv) {
 	printDebug("✅ Input parsed successfully!");
 	printContainer("Original Vector", _vectorData);
 	printContainer("Original Deque", _dequeData);
+}
+
+// ===================Sort and Compare ==================== //
+void PmergeMe::sortAndCompare() {
+	// DIsplay initial data
+	std::cout << "⏳ Initial Vector: ";
+	for (size_t i = 0; i < _vectorData.size() && i <= 20; ++i) {
+		std::cout << _vectorData[i] << " ";
+	}
+	if (_vectorData.size() > 20) {
+		std::cout << "[...]";
+	}
+	std::cout << std::endl;
+	
+	// Measure time for sorting
+
+	
+	// Display sorted sequence
+	std::cout << "✅ After: ";
+	for (size_t i = 0; i < _vectorData.size() && i < 20; ++i) {
+		std::cout << _vectorData[i] << " ";
+	}
+	if (_vectorData.size() > 20) {
+		std::cout << "[...]";
+	}
+	std::cout << std::endl;
+	
+	// Display time taken
+	
+	std::cout << std::fixed << std::setprecision(6);
+	std::cout << "Time to process a range of " << _vectorData.size() 
+			<< " elements with std::vector : " <<  << " ms" << std::endl;
+    std::cout << "Time to process a range of " << _dequeData.size() 
+              << " elements with std::deque : " <<  << " ms" << std::endl;
 }
