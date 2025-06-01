@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:21:22 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 14:06:07 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/01 14:25:39 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ public:
 	// Main interface
 	void parseInput(int argc, char** argv);
 	void sortAndCompare();
+	void setDebugMode(bool debug);
 
 	// Utility functions
     void validateInput(const std::string& str);

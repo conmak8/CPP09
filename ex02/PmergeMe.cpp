@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 14:15:45 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/01 14:21:21 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,18 @@ std::vector<int> PmergeMe::generateJacobsthalSequence(int size) {
 
 	return sequence;
 }
+
+// ====================Debug Helper Functions==================== //
+void PmergeMe::printDebug(const std::string& message) const {
+	if (_debugMode) {
+		std::cout << "🔧 " << message << std::endl;
+	}
+}
+
+void PmergeMe::setDebugMode(bool debug) {
+	_debugMode = debug;
+}
+
 
 // ===================Parse command argumentss==================== //
 void PmergeMe::validateInput(const std:: string& str) {
