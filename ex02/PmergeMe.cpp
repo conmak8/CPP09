@@ -6,23 +6,22 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 21:36:34 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/02 23:39:33 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
 // =================OCF================== //
-PmergeMe::PmergeMe() : _debugMode(false) {}
+PmergeMe::PmergeMe() {}
 
 PmergeMe::PmergeMe(const PmergeMe& other) 
-	: _vectorData(other._vectorData), _dequeData(other._dequeData), _debugMode(other._debugMode) {}
+	: _vectorData(other._vectorData), _dequeData(other._dequeData) {}
 
 PmergeMe& PmergeMe::operator=(const PmergeMe& other) {
 	if (this != &other) {
 		_vectorData = other._vectorData;
 		_dequeData = other._dequeData;
-		_debugMode = other._debugMode;
 	}
 	return *this;
 }
@@ -55,18 +54,6 @@ std::vector<int> PmergeMe::generateJacobsthalSequence(int size) {
 	return sequence;
 }
 
-// ====================Debug Helper Functions==================== //
-void PmergeMe::printDebug(const std::string& message) const {
-	if (_debugMode) {
-		std::cout << "🔧 " << message << std::endl;
-	}
-}
-
-void PmergeMe::setDebugMode(bool debug) {
-	_debugMode = debug;
-}
-
-
 // ===================Parse command argumentss==================== //
 void PmergeMe::validateInput(const std:: string& str) {
 	if (str.empty()) {
@@ -87,19 +74,14 @@ void PmergeMe::validateInput(const std:: string& str) {
 	}
 }
 
-
+// Parse command line arguments ======================== //
 void PmergeMe::parseInput(int argc, char** argv) {
 	if (argc < 2) {
-		throw std::invalid_argument("Usage: ./PmergeMe [numbers...] [--debug]");
+		throw std::invalid_argument("Usage: ./PmergeMe [numbers...]");
 	}
 
 	for (int i = 1; i < argc; ++i) {
 		std::string arg(argv[i]);
-
-		if (arg == "--debug") {
-			setDebugMode(true);
-			continue;
-		}
 
 		validateInput(arg);
 		int num = std::stoi(arg);
@@ -111,10 +93,6 @@ void PmergeMe::parseInput(int argc, char** argv) {
 	if (_vectorData.empty()) {
 		throw std::invalid_argument("No valid numbers provided");
 	}
-
-	printDebug("✅ Input parsed successfully!");
-	// printContainer("Original Vector", _vectorData);
-	// printContainer("Original Deque", _dequeData);
 }
 
 // ===================Sort and Compare ==================== //

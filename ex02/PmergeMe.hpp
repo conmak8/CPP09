@@ -6,35 +6,30 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:21:22 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/01 21:23:19 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/02 23:33:36 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PMERGEME_HPP
 # define PMERGEME_HPP
 
-# include <vector>
-# include <deque>
-# include <iostream>
-# include <sstream>
-# include <chrono>
-# include <algorithm>
-# include <iomanip>
+# include <vector>		// std::vector
+# include <deque>		// std::deque
+# include <iostream>		// std::cout, std::cerr
+# include <chrono>		// std::chrono
+# include <algorithm>	// std::swap, std::lower_bound
+# include <iomanip>		// std::setprecision, std::fixed
+# include <string>		// std::string, std::stoi ,std::stol
+# include <limits>      // std::numeric_limits<int>::max()
 
 class PmergeMe {
 private:
 	std::vector<int> _vectorData;
 	std::deque<int> _dequeData;
-	bool _debugMode;
 
 	// Jacobsthal sequence generator
 	static int getJacobsthal(int n);
 	static std::vector<int> generateJacobsthalSequence(int size);
-
-	// Debug helpers
-	void printDebug(const std::string& message) const;
-	template<typename Container>
-	void printContainer(const std::string& label, const Container& container) const;
 
 public:
 	// Orthodox Canonical Form
@@ -46,7 +41,6 @@ public:
 	// Main interface
 	void parseInput(int argc, char** argv);
 	void sortAndCompare();
-	void setDebugMode(bool debug);
 
 	// Vector sorting functions (separate file)
 	void sortVector();
@@ -58,8 +52,6 @@ public:
 
 	// Utility functions
 	void validateInput(const std::string& str);
-	
 };
-
 
 #endif // PMERGEME_HPP
