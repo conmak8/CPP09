@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/02 23:39:33 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/03 01:34:28 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,12 +69,12 @@ void PmergeMe::validateInput(const std:: string& str) {
 
 	// Convert to long and check its rangee
 	long num = std::stol(str);
-	if (num < 0 || num > std::numeric_limits<int>::max()) {
+	if (num <= 0 || num > std::numeric_limits<int>::max()) {
 		throw std::invalid_argument("Number out of valid range: " + str);
 	}
 }
 
-// Parse command line arguments ======================== //
+// ================Parse command line arguments ================= //
 void PmergeMe::parseInput(int argc, char** argv) {
 	if (argc < 2) {
 		throw std::invalid_argument("Usage: ./PmergeMe [numbers...]");
@@ -90,9 +90,9 @@ void PmergeMe::parseInput(int argc, char** argv) {
 		_dequeData.push_back(num);
 	}
 
-	if (_vectorData.empty()) {
-		throw std::invalid_argument("No valid numbers provided");
-	}
+	// if (_vectorData.empty()) {
+	// 	throw std::invalid_argument("No valid numbers provided");
+	// }
 }
 
 // ===================Sort and Compare ==================== //
@@ -126,7 +126,7 @@ void PmergeMe::sortAndCompare() {
 	
 	// Display sorted sequence
 	std::cout << "✅ After: ";
-	for (size_t i = 0; i < _vectorData.size() && i < 20; ++i) {
+	for (size_t i = 0; i < _vectorData.size() && i <= 20; ++i) {
 		std::cout << _vectorData[i] << " ";
 	}
 	if (_vectorData.size() > 20) {
@@ -139,8 +139,8 @@ void PmergeMe::sortAndCompare() {
 	std::cout << std::fixed << std::setprecision(6);
 	std::cout << "Time to process a range of " << _vectorData.size() 
 			<< " elements with std::vector : " << vectorTime/1000 << " ms" << std::endl;
-    std::cout << "Time to process a range of " << _dequeData.size() 
-              << " elements with std::deque : " << dequeTime/1000 << " ms" << std::endl;
+	std::cout << "Time to process a range of " << _dequeData.size() 
+			<< " elements with std::deque : " << dequeTime/1000 << " ms" << std::endl;
 }
 
 // ===================Sort Vector ==================== //
