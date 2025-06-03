@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 18:49:19 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/03 21:51:55 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/04 00:21:00 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ namespace {
 bool BitcoinExchange::loadDatabase(const std::string &filename) {
 	std::ifstream file(filename);
 	if (!file.is_open()) {
-		std::cerr << "❌ Error: exchange rated could not be opened." << std::endl;
+		std::cerr << "❌ Error: Database could not be opened." << std::endl;
 		return false;
 	}
 
@@ -182,7 +182,7 @@ bool BitcoinExchange::loadDatabase(const std::string &filename) {
 void BitcoinExchange::processInput(const std::string &filename) {
 	std::ifstream file(filename);
 	if (!file.is_open()) {
-		std::cerr << "❌ Error: exchange rated could not be opened." << std::endl;
+		std::cerr << "❌ Error: User's exchange rates could not be opened." << std::endl;
 		return ;
 	}
 
