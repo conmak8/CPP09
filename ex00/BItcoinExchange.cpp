@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   BItcoinExchange.cpp                                :+:      :+:    :+:   */
+/*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 18:49:19 by cmakario          #+#    #+#             */
-/*   Updated: 2025/05/11 15:31:52 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/03 21:51:55 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,21 @@
 
 
 //---------------OCF------------------//
-BitcoinExchange::BitcoinExchange() {											// Default constructor
-}
+BitcoinExchange::BitcoinExchange() {}											// Default constructor
+
 BitcoinExchange::BitcoinExchange(const BitcoinExchange &src) {					// Copy constructor
 	*this = src;
 }
+
 BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &rhs) {		// Copy assignment operator
 	if (this != &rhs) {
 		this->_dataBase = rhs._dataBase;
 	}
 	return *this;
 }
-BitcoinExchange::~BitcoinExchange() {											// Destructor
-}
+
+BitcoinExchange::~BitcoinExchange() {}											// Destructor
+
 
 // v2.approach
 /* BitcoinExchange::BitcoinExchange() = default;
@@ -113,6 +115,17 @@ namespace {
 				std::cerr << "❌ Error: Value is too high." << std::endl;
 				return false;
 			}
+			if (value == 0 && valueStr.find('-') != std::string::npos) {
+				std::cerr << "❌ Error: Negative zero is not allowed." << std::endl;
+				return false;
+			}
+				// throw std::invalid_argument("Negative zero is not allowed");
+		// Optional: Reject decimals that start with dot
+			if (valueStr[0] == '.'){
+				std::cerr << "❌ Error: Must start with digit before decimal." << std::endl;
+				return false;
+			}
+				// throw std::invalid_argument("Must start with digit before decimal");
 		} catch (const std::invalid_argument&) {
 			std::cerr << "❌ Error: Invalid value." << std::endl;
 			return false;
@@ -215,6 +228,9 @@ void BitcoinExchange::processInput(const std::string &filename) {
 		} else {
 			std::string closestDate = findClosestDate(date);
 			// std::cout << "Closest date: " << closestDate << " Data: " << _dataBase[closestDate] << std::endl;
+			// if (_dataBase.empty()) {
+			// 	std::cerr << "❌ Error: The database is empty. No exchange rates available.\n";
+			// }
 			double rate = _dataBase[closestDate];
 			std::cout << "\033[32m" << date << " => " << valueStr << " = " << value << " * " 
 			<< rate << " = " << "\033[1m" << rate * value << "\033[0m" << std::endl;
