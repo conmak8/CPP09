@@ -6,11 +6,15 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:31:27 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/03 01:34:28 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/03 23:33:41 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
+#include <iostream>	// std::cout, std::cerr
+#include <chrono>		// std::chrono
+#include <algorithm>	// std::swap, std::lower_bound
+#include <iomanip>		// std::setprecision, std::fixed
 
 // =================OCF================== //
 PmergeMe::PmergeMe() {}

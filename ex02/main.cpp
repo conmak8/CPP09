@@ -6,11 +6,12 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:07:59 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/03 00:19:20 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/03 23:34:10 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
+#include <iostream>	// std::cout, std::cerr
 
 
 int main(int argc, char** argv) {

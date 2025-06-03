@@ -6,7 +6,7 @@
 /*   By: cmakario <cmakario@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 01:21:22 by cmakario          #+#    #+#             */
-/*   Updated: 2025/06/03 00:09:02 by cmakario         ###   ########.fr       */
+/*   Updated: 2025/06/03 23:33:23 by cmakario         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,6 @@
 
 # include <vector>		// std::vector
 # include <deque>		// std::deque
-# include <iostream>	// std::cout, std::cerr
-# include <chrono>		// std::chrono
-# include <algorithm>	// std::swap, std::lower_bound
-# include <iomanip>		// std::setprecision, std::fixed
 # include <string>		// std::string, std::stoi ,std::stol
 # include <limits>		// std::numeric_limits<int>::max()
 
